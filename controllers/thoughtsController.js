@@ -1,114 +1,78 @@
 // Require Thoughts and Users Models
-const {Thoughts, Users} = require('../models');
+const { Thoughts, Users } = require('../models');
 
-// // Set up Thoughts Controller
-// const thoughtsController = {
+module.exports = {
+    // Get all Thoughts
+    async getThoughts (req, res) {
+        try {
+            const thoughts = await Thoughts.find();
+            res.json(thoughts);
+        } catch (err) {
+            res.status(500).json(err);
+        }
+    },
 
-//     // Create a new thought
-//     createThoughts({params, body}, res) {
-//         Thoughts.create(body)
-//         .then(({_id}) => {
-//             return Users.findOneAndUpdate({ _id: params.userId}, {$push: {thoughts: _id}}, {new: true});
-//         })
-//         .then(dbThoughtsData => {
-//             if(!dbThoughtsData) {
-//                 res.status(404).json({message: 'No thoughts with this particular ID!'});
-//                 return;
-//             }
-//             res.json(dbThoughtsData)
-//         })
-//         .catch(err => res.json(err)); 
-//     },
+    // Get a single Thought
+    async getSingleThought(req, res) {
+        try {
+            const thought = await Thoughts.findOne({ _id: req.params.thoughtId })
+            .select('-__v');
 
-//     // Get all available Thoughts
-//     getAllThoughts(req,res) {
-//         Thoughts.find({})
-//         .populate({path: 'reactions', select: '-__v'})
-//         .select('-__v')
-//         // .sort({_id: -1})
-//         .then(dbThoughtsData => res.json(dbThoughtsData))
-//         .catch(err => {
-//             console.log(err);
-//             res.status(500).json(err);
-//         });
-//     },
+            if (!thought) {
+                return res.status(404).json({ message: "No thought with that ID" });
+            }
 
-//     // Get a certain thought by ID
-//     getThoughtsById({params}, res) {
-//         Thoughts.findOne({ _id: params.id })
-//         .populate({path: 'reactions',select: '-__v'})
-//         .select('-__v')
-//         .then(dbThoughtsData => {
-//             if(!dbThoughtsData) {
-//             res.status(404).json({message: 'No thoughts with this particular ID!'});
-//             return;
-//         }
-//         res.json(dbThoughtsData)
-//         })
-//         .catch(err => {
-//             console.log(err);
-//             res.sendStatus(400);
-//         });
-//     },
+            res.json(thought);
+        } catch (err) {
+            res.status(500).json(err);
+        }
+    },
 
-//     // Update a current thought by ID
-//     updateThoughts({params, body}, res) {
-//         Thoughts.findOneAndUpdate({_id: params.id}, body, {new: true, runValidators: true})
-//         .populate({path: 'reactions', select: '-__v'})
-//         .select('-___v')
-//         .then(dbThoughtsData => {
-//             if (!dbThoughtsData) {
-//                 res.status(404).json({message: 'No thoughts with this particular ID!'});
-//                 return;
-//             }
-//                 res.json(dbThoughtsData);
-//         })
-//         .catch(err => res.json(err));
-//     },
+    // Create a single Thought
+    async createThought(req, res) {
+        try {
+            const thought = await Thoughts.create(req.body);
+            res.json(thought);
+        } catch (err) {
+            console.log(err);
+            return res.status(500).json(err);
+        }
+    },
 
-//     // Delete a current thought by ID
-//     deleteThoughts({params}, res) {
-//         Thoughts.findOneAndDelete({_id: params.id})
-//         .then(dbThoughtsData => {
-//             if (!dbThoughtsData) {
-//                 res.status(404).json({message: 'No thoughts with this particular ID!'});
-//                 return;
-//             }
-//             res.json(dbThoughtsData);
-//             })
-//             .catch(err => res.status(400).json(err));
-//     },
+    // Update a single Thought
+    async updateThought(req, res) {
+        try {
+            const thought = await Thoughts.findOneAndUpdate(
+                { _id: req.params.thoughtId },
+                { $set: req.body },
+                { runValidators: true, new: true }
+            );
 
-//     // Add a new Reaction
-//     addReaction({params, body}, res) {
-//         Thoughts.findOneAndUpdate({_id: params.thoughtId}, {$push: {reactions: body}}, {new: true, runValidators: true})
-//         .populate({path: 'reactions', select: '-__v'})
-//         .select('-__v')
-//         .then(dbThoughtsData => {
-//         if (!dbThoughtsData) {
-//             res.status(404).json({message: 'No thoughts with this particular ID!'});
-//             return;
-//         }
-//         res.json(dbThoughtsData);
-//         })
-//         .catch(err => res.status(400).json(err))
+            if (!thought) {
+                res.status(404).json({ message: 'No thought with this id!' });
+            }
 
-//     },
+            res.json(thought);
+        } catch (err) {
+            res.status(500).json(err);
+        }
+    },
 
-//     // Delete a reaction by ID
-//     deleteReaction({params}, res) {
-//         Thoughts.findOneAndUpdate({_id: params.thoughtId}, {$pull: {reactions: {reactionId: params.reactionId}}}, {new : true})
-//         .then(dbThoughtsData => {
-//             if (!dbThoughtsData) {
-//                 res.status(404).json({message: 'No thoughts with this particular ID!'});
-//                 return;
-//             }
-//             res.json(dbThoughtsData);
-//         })
-//         .catch(err => res.status(400).json(err));
-//     }
+    // Delete a single Thought
+    async deleteThought(req, res) {
+        try {
+            const thought = await Thoughts.findOneAndDelete({ _id: req.params.thoughtId });
 
-// };
+            if (!thought) {
+                res.status(404).json({ message: "No thought with that ID!" });
+            }
+        } catch (err) {
+            res.status(500).json(err);
+        }
+    },
 
-// // Export module thought controller
-// module.exports = thoughtsController;
+    // Add a Reaction
+
+    // Delete a Reaction
+
+};
