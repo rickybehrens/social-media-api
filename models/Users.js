@@ -24,11 +24,11 @@ const usersSchema = new Schema(
             max_length: 50,
         },
         thoughts: [{
-            type: Schema.Type.ObjectId,
+            type: Schema.Types.ObjectId,
             ref: 'Thoughts'
         }],
         friends: [{
-            type: Schema.Type.ObjectId,
+            type: Schema.Types.ObjectId,
             ref: 'Users'
         }]
     },

@@ -6,7 +6,7 @@ const reactionsSchema = new Schema(
         // Set custom ID 
         reactionId: {
             type: Schema.Types.ObjectId,
-            default: () => new Types.ObjectId()
+            default: () => new Schema.Types.ObjectId()
         },
         reactionText: {
             type: String,
@@ -35,7 +35,7 @@ const thoughtsSchema = new Schema(
     {
         thoughtId: {
             type: Schema.Types.ObjectId,
-            default: () => new Types.ObjectId(),
+            default: () => new Schema.Types.ObjectId(),
         },
         thoughtText: {
             type: String,
