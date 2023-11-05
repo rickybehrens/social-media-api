@@ -1,41 +1,53 @@
+const mongoose = require('mongoose');
 const connection = require('../config/connection');
-const { Thoughts, Users } = require('../models');
+const Thoughts = require('../models/Thoughts'); // Import your Thoughts model
+const Users = require('../models/Users'); // Import your Users model
 const { getRandomUser, getRandomThought, getRandomReaction } = require('./data');
 
 connection.on('error', (err) => {
-  console.error('Connection error:', err);
+  console.error(err);
 });
 
 connection.once('open', async () => {
-  console.log('Connected to the database.');
+  console.log('Connected to MongoDB');
 
-  // Delete the collections if they exist
-  await Promise.all([Thoughts.collection.drop(), Users.collection.drop()]);
+  try {
+    // Remove any existing data
+    await Thoughts.deleteMany({});
+    await Users.deleteMany({});
 
-  const users = Array.from({ length: 20 }, getRandomUser);
+    // Create an array to hold user documents
+    const users = [];
 
-  // Add users to the collection and await the results
-  const createdUsers = await Users.create(users);
+    // Create users and their thoughts
+    for (let i = 0; i < 20; i++) {
+      const user = new Users(getRandomUser());
+      await user.save();
 
-  // Create Thoughts for each user
-  for (const user of createdUsers) {
-    const thoughts = Array.from({ length: 3 }, () => getRandomThought(user._id));
-    user.thoughts = thoughts.map((thought) => thought._id);
+      for (let j = 0; j < 3; j++) {
+        const thought = new Thoughts(getRandomThought(user.username));
+        await thought.save();
+        user.thoughts.push(thought);
+      }
 
-    // Create Reactions for each Thought from the user's friends
-    for (const friendId of user.friends) {
-      for (const thought of thoughts) {
-        thought.reactions.push(getRandomReaction(friendId));
+      users.push(user);
+    }
+
+    // Create friendships (each user becomes friends with the next user in the array)
+    for (let i = 0; i < users.length; i++) {
+      for (let j = i + 1; j < users.length; j++) {
+        users[i].friends.push(users[j]);
+        users[j].friends.push(users[i]);
+        await users[i].save();
+        await users[j].save();
       }
     }
+
+    console.log('Seeding complete!');
+  } catch (error) {
+    console.error('Seeding error:', error);
+  } finally {
+    // Close the MongoDB connection
+    mongoose.connection.close();
   }
-
-  // Save the users and Thoughts with updated associations
-  await Promise.all(createdUsers.map((user) => user.save()));
-  const createdThoughts = await Thoughts.create(
-    createdUsers.reduce((acc, user) => acc.concat(user.thoughts), [])
-  );
-
-  console.info('Seeding complete! 🌱');
-  process.exit(0);
 });
