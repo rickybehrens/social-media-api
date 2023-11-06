@@ -62,6 +62,8 @@ module.exports = {
     async deleteUser(req, res) {
         try {
             const user = await Users.findOneAndDelete({ _id: req.params.username });
+            // Send a success response
+            res.status(200).json({ message: 'User deleted successfully' });
 
             if (!user) {
                 res.status(404).json({ message: 'No user with that username' });
@@ -74,14 +76,15 @@ module.exports = {
     // Add a single Friend
     async addFriend(req, res) {
         try {
-            const { username, friendUsername } = req.params;
+            const { username, friendId } = req.params;
             const user = await Users.findOne({ _id: username });
-            const friend = await Users.findOne({ username: friendUsername });
+            const friend = await Users.findOne({ _id: friendId });
 
             if (!user || !friend) {
                 return res.status(404).json({ message: 'User or friend not found' });
             }
 
+            // Check if the user is trying to add themselves as a friend
             if (user._id.equals(friend._id)) {
                 return res.status(400).json({ message: 'You cannot be friends with yourself' });
             }
@@ -103,7 +106,7 @@ module.exports = {
     // Delete a single Friend
     async deleteFriend(req, res) {
         try {
-            const { username, friendUsername } = req.params;
+            const { username, friendId } = req.params; // Change friendUsername to friendId
             const user = await Users.findOne({ _id: username });
 
             if (!user) {
@@ -111,16 +114,16 @@ module.exports = {
             }
 
             // Check if the friend is in the user's friends list
-            const friend = await Users.findOne({ username: friendUsername });
+            const friend = await Users.findOne({ _id: friendId }); // Change to use friendId
             if (!friend) {
                 return res.status(404).json({ message: 'Friend not found' });
             }
 
-            if (!user.friends.includes(friend._id)) {
+            if (!user.friends.includes(friendId)) { // Change to use friendId
                 return res.status(400).json({ message: 'Friend not found in the user\'s friends list' });
             }
 
-            user.friends = user.friends.filter((id) => !id.equals(friend._id));
+            user.friends = user.friends.filter((id) => !id.equals(friendId)); // Change to use friendId
             await user.save();
 
             res.json(user);
