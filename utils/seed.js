@@ -37,6 +37,14 @@ connection.once('open', async () => {
       const user = new Users({ ...getRandomUser(), ...userData });
       await user.save();
       users.push(user);
+
+      // Create 2 thoughts for each user
+      for (let j = 0; j < 2; j++) {
+        const thought = new Thoughts(getRandomThought(user._id));
+        await thought.save();
+        user.thoughts.push(thought);
+        await user.save();
+      }
     }
 
     // Create friendships (each user has exactly 4 friends)

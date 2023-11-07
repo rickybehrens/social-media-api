@@ -7,9 +7,9 @@ const reactionsSchema = new mongoose.Schema(
         // Set custom ID 
         reactionId: {
             type: Schema.Types.ObjectId,
-            default: () => new Schema.Types.ObjectId()
+            default: () => new Types.ObjectId()
         },
-        reactionText: {
+        reactionBody: {
             type: String,
             required: true,
             maxlength: 50
@@ -33,10 +33,6 @@ const reactionsSchema = new mongoose.Schema(
 
 // Schema to create Thoughts model
 const thoughtsSchema = new mongoose.Schema({
-    thoughtId: {
-        type: Types.ObjectId, // Use Schema directly
-        default: () => new Types.ObjectId(),
-    },
     thoughtText: {
         type: String,
         required: true,
