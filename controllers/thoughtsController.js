@@ -30,17 +30,13 @@ module.exports = {
 
     // Create a single Thought
     async createThought(req, res) {
-        console.log(req.body);
-
         try {
             const thought = await Thoughts.create(req.body);
-            console.log(thought);
             const userData = await Users.findOneAndUpdate(
                 { _id: req.body.userId },
                 { $push: { thoughts: thought._id } },
                 { runValidators: true, new: true }
             )
-            console.log(userData);
             res.json(userData);
 
         } catch (err) {

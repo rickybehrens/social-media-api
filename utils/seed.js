@@ -56,8 +56,6 @@ connection.once('open', async () => {
       }
     }
 
-    console.log(users);
-
     console.log('Seeding complete!');
   } catch (error) {
     console.error('Seeding error:', error);
