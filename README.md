@@ -21,7 +21,9 @@ npm i
 
   
 ## Usage
-Nothing for now
+This app allows for users to befriend each other. User are allowed to post "thoughts" and any user is allowed to have a "reaction" on those thoughts. The app will allow you to search for one or all users, create an user, update user's information, delete a single user, add firends and remove friends.
+
+At the same time, the app will allow you to search for one or all thoughts, create a thought, update a single thought, delete a single thought, add or remove a reaction.
 
   
 ## License
@@ -39,7 +41,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
   
     
 ## Contributing
-Nothing for now
+If you would like to contribute to this app, please refer to the questions section.
 
   
 ## Tests
