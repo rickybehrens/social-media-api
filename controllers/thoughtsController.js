@@ -80,7 +80,7 @@ module.exports = {
 
             // Then, remove the thoughtId from the user's thoughts array
             const userData = await Users.findOneAndUpdate(
-                { _id: req.body.userId },
+                { thoughts: req.params.thoughtId },
                 { $pull: { thoughts: thought._id } }, // Use $pull to remove the thoughtId from the array
                 { runValidators: true, new: true }
             );
@@ -127,11 +127,7 @@ module.exports = {
             const { thoughtId, reactionId } = req.params;
             const thought = await Thoughts.findOneAndUpdate(
                 { _id: thoughtId },
-                {
-                    $pull: {
-                        reactions: { reactionId: reactionId }
-                    }
-                },
+                { $pull: { reactions: { reactionId: reactionId } } },
                 { runValidators: true, new: true }
             );
 
